@@ -327,6 +327,9 @@ options:
   --src-param SRC_PARAM
                         Adds a parameter to the generated function and uses it
                         as a value of the src attribute (default: None)
+  --version-param VERSION_PARAM
+                        Adds a parameter to the generated function and uses it
+                        as a value of the version attribute (default: None)
   --source-root SOURCE_ROOT
                         Set sourceRoot attribute value in the generated Nix
                         expression. Substring '{package_name}' gets replaced

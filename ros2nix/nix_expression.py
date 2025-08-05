@@ -87,12 +87,14 @@ class NixExpression:
                  distro_name: str,
                  build_type: str,
                  src_expr: str,
+                 version_expr: Optional[str] = None,
                  build_inputs: Set[str] = set(),
                  propagated_build_inputs: Set[str] = set(),
                  check_inputs: Set[str] = set(),
                  native_build_inputs: Set[str] = set(),
                  propagated_native_build_inputs: Set[str] = set(),
                  src_param: Optional[str] = None,
+                 version_param: Optional[str] = None,
                  source_root: Optional[str] = None,
                  do_check: Optional[bool] = None,
                  patches: Optional[List[str]] = None,
@@ -101,6 +103,8 @@ class NixExpression:
         self.version = version
         self.src_param = src_param
         self.src_expr = src_expr
+        self.version_param = version_param
+        self.version_expr = version_param
         self.patches = patches
         self.source_root = source_root
         self.do_check = do_check
@@ -148,6 +152,11 @@ class NixExpression:
             args.append(self.src_param)
         src = indent(self.src_expr, "  ").strip()
 
+        version = f"{self.version}"
+        if self.version_param:
+            args.append(self.version_param)
+            version = self.version_expr
+
         args.extend(sorted(set(map(self._to_nix_parameter,
                                    self.build_inputs |
                                    self.propagated_build_inputs |
@@ -156,19 +165,30 @@ class NixExpression:
                                    self.propagated_native_build_inputs))))
         ret += '{ ' + ', '.join(args) + ' }:'
 
+        full_src_expression = f"src = {src}"
+        full_version_expression = f"version = {version}"
+
+        # If the package uses src as src or version as version, use inherit to
+        # avoid infitite recursion.
+        if src == "src":
+            full_src_expression = "inherit src"
+
+        if version == "version":
+            full_version_expression = "inherit version"
+
         ret += dedent('''
         buildRosPackage rec {{
           pname = "ros-{distro_name}-{name}";
-          version = "{version}";
+          {version};
 
-          src = {src};
+          {src};
 
           buildType = "{build_type}";
         ''').format(
             distro_name=self.distro_name,
             name=self.name,
-            version=self.version,
-            src=src,
+            version=full_version_expression,
+            src=full_src_expression,
             build_type=self.build_type)
         if self.patches:
             ret += f"""  patches = [\n    {"\n    ".join(self.patches)}\n  ];\n"""

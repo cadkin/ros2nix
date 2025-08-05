@@ -349,6 +349,10 @@ def ros2nix(args):
         help="Adds a parameter to the generated function and uses it as a value of the src attribute",
     )
     parser.add_argument(
+        "--version-param",
+        help="Adds a parameter to the generated function and uses it as a value of the version attribute",
+    )
+    parser.add_argument(
         "--source-root",
         help="Set sourceRoot attribute value in the generated Nix expression. "
         "Substring '{package_name}' gets replaced with the package name.",
@@ -483,6 +487,10 @@ def ros2nix(args):
 
             kwargs = {}
             patches = []
+
+            if args.version_param:
+                kwargs["version_param"] = args.version_param
+                kwargs["version_expr"] = args.version_param
 
             if args.src_param:
                 kwargs["src_param"] = args.src_param
