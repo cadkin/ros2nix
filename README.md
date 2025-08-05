@@ -303,6 +303,12 @@ options:
                         package files are stored next to their corresponding
                         package.xml, top-level files like overlay.nix in the
                         current directory. (default: None)
+  --name-format NAME_FORMAT
+                        Format to use for the name in the resulting package
+                        expression. The string {distro} is replaced with the
+                        ros distro (set via --distro). Similarly, {package_name}
+                        is replaced with the name of the package. (default:
+                        ros-{distro}-{package_name})
   --fetch               Use fetches like fetchFromGitHub in src attribute
                         values. The fetch function and its parameters are
                         determined from the local git work tree. sourceRoot

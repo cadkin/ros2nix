@@ -85,6 +85,7 @@ class NixExpression:
     def __init__(self, name: str, version: str,
                  description: str, licenses: Iterable[NixLicense],
                  distro_name: str,
+                 name_format: str,
                  build_type: str,
                  src_expr: str,
                  version_expr: Optional[str] = None,
@@ -112,6 +113,7 @@ class NixExpression:
         self.description = description
         self.licenses = licenses
         self.distro_name = distro_name
+        self.name_format = name_format
         self.build_type = build_type
 
         self.build_inputs = build_inputs
@@ -176,9 +178,14 @@ class NixExpression:
         if version == "version":
             full_version_expression = "inherit version"
 
+        formatted_name = self.name_format.format(
+            distro=self.distro_name,
+            package_name=self.name
+        )
+
         ret += dedent('''
         buildRosPackage rec {{
-          pname = "ros-{distro_name}-{name}";
+          pname = "{name}";
           {version};
 
           {src};
@@ -186,7 +193,7 @@ class NixExpression:
           buildType = "{build_type}";
         ''').format(
             distro_name=self.distro_name,
-            name=self.name,
+            name=formatted_name,
             version=full_version_expression,
             src=full_src_expression,
             build_type=self.build_type)

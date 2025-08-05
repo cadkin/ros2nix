@@ -317,6 +317,14 @@ def ros2nix(args):
     )
 
     parser.add_argument(
+        "--name-format",
+        help="Format to use for the name in the resulting package expression. "
+        "The string {distro} is replaced with the ros distro (set via --distro). "
+        "Similarly, {package_name} is replaced with the name of the package.",
+        default="ros-{distro}-{package_name}"
+    )
+
+    parser.add_argument(
         "--fetch",
         action="store_true",
         help="Use fetches like fetchFromGitHub in src attribute values. "
@@ -598,6 +606,7 @@ def ros2nix(args):
                 description=pkg.description,
                 licenses=map(NixLicense, pkg.licenses),
                 distro_name=args.distro,
+                name_format=args.name_format,
                 build_type=pkg.get_build_type(),
                 build_inputs=build_inputs | set(args.extra_build_inputs),
                 propagated_build_inputs=propagated_build_inputs | set(args.extra_propagated_build_inputs),
