@@ -283,7 +283,7 @@ usage: ros2nix [-h] [--output OUTPUT | --output-as-ros-pkg-name |
                [--flake] [--default | --no-default] [--overlay | --no-overlay]
                [--packages | --no-packages] [--shell | --no-shell]
                [--shell-only] [--nix-ros-overlay FLAKEREF] [--nixfmt]
-               [--compare] [--copyright-holder COPYRIGHT_HOLDER]
+               [--compare] [--fire] [--copyright-holder COPYRIGHT_HOLDER]
                [--license LICENSE]
                package.xml [package.xml ...]
 
@@ -402,6 +402,8 @@ options:
                         file would change existing files. Exit with exit code
                         2 if a change is detected. Useful for CI. (default:
                         False)
+  --fire                Generate a FIRE compatible flake.nix file (default:
+                        None)
   --copyright-holder COPYRIGHT_HOLDER
                         Copyright holder of the generated Nix expressions.
                         (default: None)
